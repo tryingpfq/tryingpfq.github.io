@@ -22,7 +22,9 @@ RSS: false
 zhihu_username:     tryingpfq
 github_username:    tryingpfq
 facebook_username:  #baiying.qiu.7
-jianshu_username:   #e71990ada2fd
+jianshu_username:   eb6a0b33921a
+douban_username:  tryingpfq
+
 #twitter_username:   tryingpfq
 
 
@@ -77,8 +79,8 @@ gitalk:
 ba_track_id: #b50bf2b12b5338a1845e33832976fd68
 
 # Google Analytics
-ga_track_id: 'UA-90855596-1'            # Format: UA-xxxxxx-xx
-ga_domain: tryingpfq.top               # 默认的是 auto, 这里我是自定义了的域名，你如果没有自己的域名，需要改成auto
+ga_track_id: #'UA-90855596-1'            # Format: UA-xxxxxx-xx
+ga_domain: auto                         # 默认的是 auto, 这里我是自定义了的域名，你如果没有自己的域名，需要改成auto
 
 
 
@@ -99,14 +101,14 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "WY",
-        href: "http://zhengwuyang.com"
+        title: "游戏安全实验室",
+        href: "https://gslab.qq.com/portal.php"
     },{
-        title: "简书·BY",
-        href: "http://www.jianshu.com/u/e71990ada2fd"
+        title: "简书",
+        href: "http://www.jianshu.com/u/eb6a0b33921a"
     },{
-        title: "Apple",
-        href: "https://apple.com"
+        title: "豆瓣",
+        href: "https://www.douban.com/people/178642011/"
     },{
         title: "Apple Developer",
         href: "https://developer.apple.com/"
