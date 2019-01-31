@@ -1,5 +1,6 @@
 
-
+## 我的博客主页
+![my home](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/img/my-home.png?raw=true)
 博客的搭建教程修改自 [Hux](https://github.com/Huxpro/huxpro.github.io) 
 
 
