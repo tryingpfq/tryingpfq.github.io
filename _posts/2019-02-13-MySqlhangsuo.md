@@ -47,4 +47,6 @@ Mysql的行锁是在引擎层由各个引擎自己实现的，但并不是所有
      }
  3：20个连接中同时删除 delete from T limit 500;
 ```
+
+ 参考[mysql 45讲](https://time.geekbang.org/column/139)
      
