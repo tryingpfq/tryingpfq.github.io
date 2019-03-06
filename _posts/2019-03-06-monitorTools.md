@@ -194,4 +194,6 @@ jstack可以用来打印目标Java进程中各个线程的栈轨迹，以及这�
 的信息(堆栈 线程 GC 性能....)，先要使用jps命令找到对应的pid,然后通过相应的命令以及其子命令去
 查看需要对应的信息。
 
+[GUI MAT的使用](http://tryingpfq.top/2019/03/06/matTool/)
+
 参考：[极客时间](https://time.geekbang.org/column/article/40520)
