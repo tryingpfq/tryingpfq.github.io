@@ -28,13 +28,12 @@ CPU的高性能，主要有三个方面
 缓存上进行写，对另外线程是可见的。如下图所示，线程A B对共享变量V进行修改，互相之间是可见的，
 对于任意线程的访问，都会读取到最新的值,即一个线程对共享变量的修改，其他线程能够立即看到。（单核CPU缓存与内存关系图）
 ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/conQsource1.png?raw=true)
-
+<p align = "center">单核cpu缓存与内存关系图</p>
 现在基本都是多核了，然而cpu都有自己的缓存，这个时候cpu缓存与内存数据就可能存在不一致性。
 比如下图，线程A在CPU上对变量V进行了修改，而没有立刻刷新到内存中，显然，这个时候线程A
 对变量V的操作对于线程B来说是不可见的。这个问题就是硬件的迭代发展给程序员带来的问题。
-多核CPU的缓存与内存关系图：
 ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/conQsource2.png?raw=true)
-
+<p align = "center">多核CPU的缓存与内存关系图</p>
 
 下面我们来通过一段代码来看看多核场景下可见性的问题。
 ```java
@@ -92,7 +91,7 @@ t1对count的操作对于t2来说是不可见得，读到的时间可能是0；�
 cpu使用权，也就是任务在CPU上的切换。
 如果一个进程要进行IO操作，测此时可以让出CPU，进入休眠状态，其他进程则可占有CPU，当其他进程IO完成后，会被唤醒。
 ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/conQsource4.png?raw=true)
-
+<p align = "center">线程切换图</p>
 
 早起的操作系统任务调度是基于进程的，现代操作系统中，进程是资源分配的单位，但线程是调度的基本单位。一个进程可以创建多个线程，
 并且这些线程是共享同一个内存空间的，显然线程切换比进程切换成本会低。前面所说的任务切换，其实就是现在的线程切换。
