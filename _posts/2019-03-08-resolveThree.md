@@ -145,7 +145,7 @@ class Account {
 
 ```
 
-这种类对象锁一般是不会用的粒度太多，而且这还会导致死锁问题。这种问题怎么解决呢，看[下一篇](http://tryingpfq.top/2019/03/08/deadlock/)
+这种类对象锁一般是不会用的粒度太多，而且这还会导致死锁问题。这种问题怎么解决呢，看[下一篇](http://tryingpfq.top/2019/03/11/deadlock/)
 
 ### 小结
 java内存模型中的Happens-Before规则，本质上是为了解决可见性问题。A Happens-Before B,则
