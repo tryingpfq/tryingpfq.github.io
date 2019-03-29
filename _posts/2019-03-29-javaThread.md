@@ -4,18 +4,18 @@ title:      java线程
 subtitle:   有关java线程中线程的生命周期和局部变量的线程安全问题。
 date:       2019-03-29
 author:     tryingpfq
-header-img: img/post-bg-gc1.jpg
+header-img: img/post-bg-th.jpg
 catalog: true
 tags:
     - 并发编程
 ---
 
-> 接下来主要是聊聊，有关java线程的生命周期，和java线程几种状态是如何转换的，一起有关线程中局部变量
+> 接下来主要是聊聊，有关java线程的生命周期，和java线程几种状态是如何转换的，以及有关线程中局部变量
 的一些线程安全问题。
 
 ### 通用的线程生命周期
    通用的线程生命周期基本就五种状态了，如下图所示：
-   ![通用线程状态](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-th1.png?raw=true)
+   ![通用线程状态](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-th1.jpg)
    <p align = "center">通用线程状态</p>
    * 1：**初始状态**,指的是线程已经被创建，这里仅仅是编程语言层面的创建，但对于操作系统来说，还不运行分配cpu执行。
    * 2：**可运行状态**，指的是线程可以分配CPU执行，在这种状态下，对于操作系统来说，是真正的创建了线程。
@@ -30,7 +30,7 @@ TIMED_WAITING(有限等待状态)、TERMINATED(终止状态)。
 
 但在操作系统中，java线程的BLOCKED、WATITING、TIMED_WAITING是一种状态，即休眠状态，也就是说，如果线程处于这三种状态之一，
 那么这个线程就永远没有CPU的使用权。下面看下先看下线程状态的转换图。
-![java线程状态转换图]((https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-th2.png?raw=true)
+![java线程状态转换图](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-th1.jpg)
  <p align = "center">Java线程状态转换图</p>
  
   * 1：RUNNABLE与BLOCKED的转换。
