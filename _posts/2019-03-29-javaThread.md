@@ -30,7 +30,9 @@ TIMED_WAITING(有限等待状态)、TERMINATED(终止状态)。
 
 但在操作系统中，java线程的BLOCKED、WATITING、TIMED_WAITING是一种状态，即休眠状态，也就是说，如果线程处于这三种状态之一，
 那么这个线程就永远没有CPU的使用权。下面看下先看下线程状态的转换图。
-
+![java线程状态转换图]((https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-th2.png?raw=true)
+ <p align = "center">Java线程状态转换图</p>
+ 
   * 1：RUNNABLE与BLOCKED的转换。
      * ：只有一种场景会触发这种转换，就是线程等待synchronized的隐式锁。synchronized 修饰的方法、代码块同一时刻只允许一个
      线程执行，其他线程只能等待。在这种情况下，等待的线程就会从RUNNABLE转换到BLOCKED状态。而当等待线程获得锁后，就又会从
