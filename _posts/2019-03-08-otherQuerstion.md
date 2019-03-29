@@ -99,6 +99,37 @@ tags:
    问题是代码执行完毕后数据库中的money 字段不是10000，而是小于10000 问题出在哪里？
    这个问题的解答可以参考[开源中国](https://my.oschina.net/u/3777556/blog/3011167)
    
+   * 6：线程中断。(当某个线程被其他线程中断后，其他线程在睡眠或者阻塞的时候可以检测到异常)。看下面这段代码会有睡眠问题
+```java
+    Thread th = Thread.currentThread();
+    while(true) {
+      if(th.isInterrupted()) {
+        break;
+      }
+      // 省略业务代码无数
+      try {
+        Thread.sleep(100);
+      }catch (InterruptedException e){
+        e.printStackTrace();
+      }
+    }
+```
+本意是通过th.isInterrupted()来检测线程是否被中断，如果中断了就退出循环。当其他线程通过调用th.interrupt()来中断th线程时，
+会设置th线程的中断标志位，从而th.isInterrupted()返回true，退出while循环。
+
+这看上去是没什么问题，实际上几乎起不了作用，这段代码大部分时间都是阻塞在sleep上，当其他线程通过调用th.interrupt()来中断th
+线程时，大概率会触发InterruptedException异常，**在触发InterruptedException异常的同时，JVM会把线程的中断标志位清除，所以这个
+时候th.isInterrupted()返回false。看正确的代码：
+```java
+try {
+  Thread.sleep(100);
+}catch(InterruptedException e){
+  // 重新设置中断标志位
+  th.interrupt();
+}
+
+```
+   
 ### Jvm
 
 ### 网络知识
