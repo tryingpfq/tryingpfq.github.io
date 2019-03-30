@@ -15,7 +15,7 @@ tags:
 
 ### 通用的线程生命周期
    通用的线程生命周期基本就五种状态了，如下图所示：
-   ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-th1.jpg)
+   ![通用线程状态](http://pp606t36i.bkt.clouddn.com/bg-th1.jpg?imageView2/0/q/75|watermark/2/text/dHJ5aW5ncGZx/font/5qW35L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10)
    <p align = "center">通用线程状态</p>
    * 1：**初始状态**,指的是线程已经被创建，这里仅仅是编程语言层面的创建，但对于操作系统来说，还不运行分配cpu执行。
    * 2：**可运行状态**，指的是线程可以分配CPU执行，在这种状态下，对于操作系统来说，是真正的创建了线程。
@@ -30,7 +30,7 @@ TIMED_WAITING(有限等待状态)、TERMINATED(终止状态)。
 
 但在操作系统中，java线程的BLOCKED、WATITING、TIMED_WAITING是一种状态，即休眠状态，也就是说，如果线程处于这三种状态之一，
 那么这个线程就永远没有CPU的使用权。下面看下先看下线程状态的转换图。
-![java线程状态转换图](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-th2.jpg)
+![java线程状态转换图](http://pp606t36i.bkt.clouddn.com/bg-th2.jpg?imageView2/0/q/75|watermark/2/text/dHJ5aW5ncGZx/font/5qW35L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10)
  <p align = "center">Java线程状态转换图</p>
  
   * 1：RUNNABLE与BLOCKED的转换。
