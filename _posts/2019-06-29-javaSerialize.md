@@ -4,7 +4,7 @@ title:      Java序列化
 subtitle:   Java自带的序列化。
 date:       2019-06-29
 author:     tryingpfq
-header-img: img/post-bg-rw.jpg
+header-img: img/post-bg-serialize.jpg
 catalog: true
 tags:
     - 序列化
