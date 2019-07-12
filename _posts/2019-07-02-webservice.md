@@ -1,10 +1,10 @@
 ---
 layout:     post
-title:      RMI
-subtitle:   RMI的实现
+title:      WebService
+subtitle:   WebService的实现原理
 date:       2019-07-02
 author:     tryingpfq
-header-img: img/post-bg.rmi.jpg
+header-img: img/post-bg-coffee.jpeg
 catalog: true
 tags:
     - 分布式
