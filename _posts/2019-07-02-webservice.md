@@ -7,9 +7,9 @@ author:     tryingpfq
 header-img: img/post-bg-coffee.jpeg
 catalog: true
 tags:
-    - 分布式
-	- RPC
+    - RPC
 ---
+
 
 
 > weabService是一个轻量级独立通信技术，其实也是早期的一个RPC框架，主要是基于Web的服务，可以跨平台、语言的，相比于RMI这是很大的优势。
