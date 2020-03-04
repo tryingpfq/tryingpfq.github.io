@@ -185,3 +185,23 @@ try {
    来的呢 [参考-趣谈网络协议-第3讲]()
 
 ### 数据库
+
+
+### 其他
+
+  * Log4j 日志系统是如何初始化和加载的
+    这里只能断点看了，主要是LogManager这个类中的静态块，会到classpath下去读取相应的配置文件，和一些相应的初始化。
+    
+    
+  * Maven是如何将工程目录下的java文件进行编译
+  
+  * SimpleDateFormat 和 DateTimeFormatter
+    我们在使用SimpleDateFormat的使用，一般是定义为一个静态成员变量，但大家应该都知道，这个是线程
+    不安全的，多个线程会共享这个format，所以一般我们是怎么处理的呢，使用ThreadLocal<T> 给每个线程
+    拷贝一个副本，来解决下次安全问题，下面这个代码，应该代价都看过吧平时。
+    ~~~java
+    private static ThreadLocal<SimpleDateFormat> dateformat = 
+    ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:ss"))
+    ~~~
+    
+   ![参考](https://www.jianshu.com/p/b212afa16f1f)
