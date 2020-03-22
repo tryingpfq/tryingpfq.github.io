@@ -1,3 +1,15 @@
+---
+layout:     post
+title:      序列化工具
+subtitle:   fastJson和Gson
+date:       2020-03-17
+author:     tryingpfq
+header-img: img/post-bg-serialize1.jpg
+catalog: true
+tags:
+    - serialize
+---
+
 ### Serialize
 
 > json序列化和反序列化，这个是日常中比用到的东西，而且现在工具也比较多，但常用的还是fastJson，毕竟速度快。这主要是关于fastJson和Gson使用时候遇到的一些问题

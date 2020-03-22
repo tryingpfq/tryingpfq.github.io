@@ -1,6 +1,15 @@
+layout:     post
+title:      Zookeeper
+subtitle:   Zookeeper
+date:       2019-07-14
+author:     tryingpfq
+header-img: img/post-bg-zookeeper.jpg
+catalog: true
+tags:
 
+​	-Zookeeper -分布式
 
-#初识Zookeeper
+### 初识Zookeeper
 
 ### 前言
 >现在在分布式当中，基本离不开zookeeper的使用。分布式环境下，主要的特点的分布性、并发性、无序性，自然也会面临一些问题，比如（网络通信：网络本身的不可靠性，因此会涉及到一些网络通信的问题；网络分区：也就是我们通常说的脑裂，当网络发生异常导致分布式系统中部分节点之间的网络延时不断增大，最终导致组成分布式架构的所有节点，只有部分节点能够正常通信；三态：在分布式架构中，就三种状态，成功、失败和超时；分布式事务：ACID，原子性、一致性、隔离性、持久性）。
