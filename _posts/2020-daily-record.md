@@ -2,7 +2,7 @@
 layout:     post
 title:      2020plan
 subtitle:   每日计划
-date:       2020-03-20
+date:       2020-03-21
 author:     tryingpfq
 header-img: img/post-bg-daily1.jpeg
 catalog: true

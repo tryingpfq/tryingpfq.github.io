@@ -1,3 +1,4 @@
+---
 layout:     post
 title:      Zookeeper
 subtitle:   Zookeeper
@@ -6,8 +7,8 @@ author:     tryingpfq
 header-img: img/post-bg-zookeeper.jpg
 catalog: true
 tags:
-
-​	-Zookeeper -分布式
+    - Zookeeper
+---
 
 ### 初识Zookeeper
 
