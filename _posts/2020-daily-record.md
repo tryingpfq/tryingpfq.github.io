@@ -27,3 +27,7 @@ tags:
 * 看了下BM算法 还是比较难懂的，大概思路可以理解，但代码实现还是不会哦
 * 
 
+#### 0323
+
+* MapReduce [参考](https://blog.csdn.net/qq_35078688/article/details/83240661?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task)
+* SPI
