@@ -40,4 +40,7 @@ tags:
 
 ### 0324
 
-[ ] 看一下项目中的敏感字过滤算法
+- [x] 看一下项目中的敏感字过滤算法  ~这个还是要仔细去了解下，是如何过滤测~
+- [x] 虚拟机安装 CentOS7,准备要看看分布式了。[网络设置](https://blog.csdn.net/akipa11/article/details/81414875?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task)
+
+
