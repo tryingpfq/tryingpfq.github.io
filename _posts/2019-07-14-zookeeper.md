@@ -50,12 +50,16 @@ zookeeper是一个典型的分布式协调框架，具有分布式数据一致�
 ### zookeeper的安装
 [下载zookeeper](http://apache.fayea.com/zookeeper/zookeeper-3.5.5/) 目前版本是3.5.5,下面是基于Linux的安装，可以使用虚拟机，也方便进行集群搭建。
 
+[下载](http://mirrors.hust.edu.cn/apache/zookeeper/stable/)
+
 **单机安装**
 
 * 1.	解压zookeeper tar -zxvf zookeeper-3.4.10.tar.gz
 * 2.	cd到 ZK_HOME/conf  , copy一份zoo.cfg
 * 3.    cp  zoo_sample.cfg  zoo.cfg
-* 4.	sh zkServer.sh {start|start-foreground|stop|restart|status|upgrade|print-cmd}
+* 4. sh zkServer.sh xxx 查看命令 {start|start-foreground|stop|restart|status|upgrade|print-cmd}
+
+     启动命令 sh zkServer.sh start
 * 5.	sh zkCli.sh -server  ip:port
 
 **集群搭建**
@@ -68,6 +72,7 @@ server.2=192.168.11.135:2888:3181
 server.3=192.168.111.136:2888:3181
 2.zoo.cfg中有一个dataDir = /tmp/zookeeper
 $dataDir/myid 添加一个myid文件。
+
 3.启动服务
 	
 如果需要增加observer节点
