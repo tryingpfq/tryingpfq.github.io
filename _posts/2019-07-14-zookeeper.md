@@ -52,7 +52,7 @@ zookeeper是一个典型的分布式协调框架，具有分布式数据一致�
 
 [下载](http://mirrors.hust.edu.cn/apache/zookeeper/stable/)
 
-**单机安装**
+#### 单机搭建
 
 * 1.	解压zookeeper tar -zxvf zookeeper-3.4.10.tar.gz
 * 2.	cd到 ZK_HOME/conf  , copy一份zoo.cfg
@@ -62,24 +62,28 @@ zookeeper是一个典型的分布式协调框架，具有分布式数据一致�
      启动命令 sh zkServer.sh start
 * 5.	sh zkCli.sh -server  ip:port
 
-**集群搭建**
+#### 集群搭建
 
-1.修改zoo.cfg
-129/135/136
-server.id=ip:port:port
-server.1=192.168.11.129:2888:3181   2888表示follower节点与leader节点交换信息的端口号 3181  如果leader节点挂掉了, 需要一个端口来重新选举。
-server.2=192.168.11.135:2888:3181   
-server.3=192.168.111.136:2888:3181
-2.zoo.cfg中有一个dataDir = /tmp/zookeeper
-$dataDir/myid 添加一个myid文件。
+1：修改zoo.cfg
+	128/129/130
+	server.id=ip:port:port
+	server.1=192.168..129:2888:3181   
 
-3.启动服务
-	
+​	2888表示follower节点与leader节点交换信息的端口号 3181  如果leader节点挂掉了, 需要一个端口来重新选举。
+​	server.2=192.168.146.128:2888:3181   
+​	server.3=192.168.146.129:2888:3181
+
+2：zoo.cfg中有一个dataDir = /tmp/zookeeper
+$dataDir/myid 添加一个myid文件。这个myid是用来表示自己服务器在集群中是唯一的。范围是1-255
+
+
+
+3：启动服务	
 如果需要增加observer节点
 zoo.cfg中 增加 ;peerType=observer
-server.1=192.168.11.129:2888:3181  
-server.2=192.168.11.135:2888:3181   
-server.3=192.168.111.136:2888:3181:observer
+server.1=192.168.146.128:2888:3181  
+server.2=192.168.146.129:2888:3181   
+server.3=192.168.146.130:2888:3181:observer
 
 zookeeper集群, 包含三种角色: leader / follower /observer
 
@@ -94,5 +98,85 @@ observer 是一种特殊的zookeeper节点。可以帮助解决zookeeper的扩�
 
 
 
+### zoo.cfg
+
+* tickTime=2000 zookeeper中最小的时间单位长度 （ms）
+* initLimit=10follower节点启动后与leader节点完成数据同步的时间
+* syncLimit=5leader节点和follower节点进行心跳检测的最大延时时间
+* dataDir=/tmp/zookeeper表示zookeeper服务器存储快照文件的目录
+* dataLogDir表示配置 zookeeper事务日志的存储路径，默认指定在dataDir目录下
+* clientPort表示客户端和服务端建立连接的端口号： 2181
 
 
+
+### 概念
+
+#### 数据模型
+
+zookeeper的数据模型和文件系统类似，每一个节点称为：znode. 是zookeeper中的最小数据单元。每一个znode上都可以
+
+保存数据和挂载子节点。 从而构成一个层次化的属性结构
+
+**节点特性**
+
+持久化节点 ： 节点创建后会一直存在zookeeper服务器上，直到主动删除
+
+持久化有序节点 ：每个节点都会为它的一级子节点维护一个顺序
+
+临时节点 ： 临时节点的生命周期和客户端的**会话**保持一致。当客户端会话失效，该节点自动清理
+
+临时有序节点 ： 在临时节点上多勒一个顺序性特性
+
+**Watcher**
+
+**zookeeper**提供了分布式数据发布/订阅,zookeeper允许客户端向服务器注册一个watcher监听。当服务器端的节点触发指定事件的时候会触发watcher。服务端会向客户端发送一个事件通知watcher的通知是一次性，一旦触发一次通知后，该watcher就失效。
+
+**ACL**
+
+zookeeper提供控制节点访问权限的功能，用于有效的保证zookeeper中数据的安全性。避免误操作而导致系统出现重大事故。
+
+CREATE /READ/WRITE/DELETE/ADMIN
+
+
+
+### 命令操作
+
+* create [-s] [-e] path data acl
+
+  -s表示节点是否有序
+
+  -e表示是否为临时节点
+
+  默认情况下，是持久化节点
+
+*  get path [watch]
+
+  获得指定 path的信息
+
+* set path data [version]
+
+  修改节点 path对应的data
+
+  乐观锁的概念
+
+  数据库里面有一个 version字段去控制数据行的版本号
+
+* delete path [version]
+
+  删除节点
+
+* stat信息
+
+  cversion = 0子节点的版本号
+
+  aclVersion = 0表示acl的版本号，修改节点权限
+
+  dataVersion = 1表示的是当前节点数据的版本号 
+
+  czxid节点被创建时的事务ID
+
+  mzxid节点最后一次被更新的事务ID
+
+  pzxid当前节点下的子节点最后一次被修改时的事务ID
+
+ 
