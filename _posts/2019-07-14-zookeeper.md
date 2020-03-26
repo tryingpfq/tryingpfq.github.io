@@ -119,6 +119,10 @@ zookeeper的数据模型和文件系统类似，每一个节点称为：znode. �
 
 **节点特性**
 
+一般在分布式语境下的节点是指组成集群的每一台服务器，在 zookeeper 中还有另外一层意思，称之为数据节点（ZNode）。
+ zookeeper 的整个名字空间的结构是层次化的，和 Linux 文件系统结构相似，是一颗树。名字空间的层次由斜杠（/）来进行分割，在名称空间里面的每一个节点的名字空间由这个结点的路径来确定。
+ 每个 ZNode 上都会保存自己的数据内容，同时还会保存一系列属性信息。
+
 持久化节点 ： 节点创建后会一直存在zookeeper服务器上，直到主动删除
 
 持久化有序节点 ：每个节点都会为它的一级子节点维护一个顺序
@@ -136,6 +140,16 @@ zookeeper的数据模型和文件系统类似，每一个节点称为：znode. �
 zookeeper提供控制节点访问权限的功能，用于有效的保证zookeeper中数据的安全性。避免误操作而导致系统出现重大事故。
 
 CREATE /READ/WRITE/DELETE/ADMIN
+
+**版本**
+
+对于每个 ZNode ，zookeeper 都会为它维护一个叫 Stat 的数据结构，Stat 中记录了 ZNode 的三个数据版本，version（当前ZNode数据内容的版本号）、cversion（当前ZNode子节点的版本号）、aversion（当前ZNode的ACL变更版本号）
+
+**会话**
+
+zookeeper 中客户端启动时会与服务器建立一个 TCP 连接，从第一次连接建立开始，客户端会话的生命周期就开始了，通过这个连接，客户端能够通过心跳检测与服务器保持有效的会话，也能够向服务器发送请求并接受响应，还能够接收来自服务器的 watch 事件通知。
+
+
 
 
 
@@ -178,5 +192,15 @@ CREATE /READ/WRITE/DELETE/ADMIN
   mzxid节点最后一次被更新的事务ID
 
   pzxid当前节点下的子节点最后一次被修改时的事务ID
+  
+  
+
+### 客户端连接zookeeper_demo ###
+
+见com.tryingpfq.fenbushi.zk.demo.ClienDemo
+
+
+
+
 
  
