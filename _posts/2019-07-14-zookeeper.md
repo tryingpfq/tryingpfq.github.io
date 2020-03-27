@@ -43,6 +43,12 @@ Server端承诺会维护client端状态数据，这个状态仅仅维持一小�
 Eventually consistent：数据的最终一致性
 
 
+
+### ZAP协议
+
+
+
+
 ### 基本概念
 zookeeper是一个典型的分布式协调框架，具有分布式数据一致性的解决方案。它主要用在数据的发布/订阅（配置中心:disconf）、 负载均衡（dubbo利用了zookeeper机制实现负载均衡） 、命名服务、master选举(kafka、hadoop、hbase)、分布式队列、分布式锁。zookeeper的特性，数据一致性：从同一个客户端发起的事物请求，最终会严格按照顺序应用到zookeeper中，原子性：所有的事务请求的处理结果在整个集群中的所有机器上的应用情况是一致的，也就是说，要么整个集群中的所有机器都成功应用了某一事务、要么全都不应用，可靠性：一旦服务器成功应用了某一个事务数据，并且对客户端做了响应，那么这个数据在整个集群中一定是同步并且保留下来的，实时性：一旦一个事务被成功应用，客户端就能够立即从服务器端读取到事务变更后的最新数据状态；（zookeeper仅仅保证在一定时间内，近实时）。
 
@@ -195,11 +201,133 @@ zookeeper 中客户端启动时会与服务器建立一个 TCP 连接，从第�
   
   
 
-### 客户端连接zookeeper_demo ###
+### Java连接Zookeeper ###
 
-见com.tryingpfq.fenbushi.zk.demo.ClienDemo
+java连接zookeeper主要有三种方式，`zookeeper原始API`，`ZkClien连接`，`Curator`
+
+zookeeper原生API连接：com.tryingpfq.fenbushi.zk.demo.ClienDemo
+
+~~~java
+public class ClienDemo implements Watcher {
+    private static ZooKeeper zookeeper;
+
+    private static final String Addr = "192.168.48.128:2181,192.168.48.129:2181,192.168.48.130:2181";
+
+    private CountDownLatch countDownLatch = new CountDownLatch(1);
+
+    @Override
+    public void process(WatchedEvent watchedEvent) {
+        if (watchedEvent.getState() == SyncConnected) {
+            System.err.println("watch received event");
+            countDownLatch.countDown();
+        }
+    }
+
+    /**
+     * 连接zookeeper
+     */
+    public  void connectZookeeper()  {
+        try {
+            zookeeper = new ZooKeeper(Addr, 2000, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        countDownLatch.countDown();
+        System.err.println("zk connection success");
+    }
+
+    /**
+     * 创建节点
+     */
+    public String createNode(String path, String data) {
+        try {
+            return zookeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public List<String> getChildren(String path) {
+        List<String> children = new ArrayList<>();
+        try {
+             children = zookeeper.getChildren(path, false);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return children;
+    }
+
+    /**
+     * 获取节点数据
+     */
+    public String getNodeData(String path) {
+        byte[] data = new byte[0];
+        try {
+            data = zookeeper.getData(path, false, null);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (data == null) {
+            return "";
+        }
+        return new String(data);
+    }
+
+    /**
+     * 设置节点信息
+     */
+    public Stat setData(String path, String data) {
+        Stat stat = null;
+        try {
+            stat = zookeeper.setData(path, data.getBytes(), -1);
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return stat;
+    }
+
+    public void deleteNode(String path) {
+        try {
+            zookeeper.delete(path, -1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        }
+    }
 
 
+
+    public static void main(String[] args) {
+        ClienDemo watcher = new ClienDemo();
+        watcher.connectZookeeper();
+        String aTry = watcher.createNode("/fuyou","321");
+        System.err.println("atry " + aTry);
+//        List<String> children = watcher.getChildren("/");
+//        System.err.println(children);
+    }
+}
+
+~~~
+
+
+
+### 应用
+
+* 统一命名服务
+* 配置管理
+* 分布式锁
+* 
+* 
 
 
 
