@@ -327,7 +327,7 @@ public class ClienDemo implements Watcher {
 
     利用Zookeeper不能重复创建一个节点的特性。可以在zookeeper服务端创建`/Lock`节点，然后所有客户端需要获取锁的时候在改节点下创建lock节点，如果创建成功，那么说明获取锁成功，释放的时候，把这个节点删除，其他客户端就可以再次竞争该锁。
 
-    ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk1.jpg?raw=true)
+    ![排它锁](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk1.jpg?raw=true)
 
     **代码实现：**基于javaAPI简单 实现
 
@@ -427,7 +427,7 @@ public class ClienDemo implements Watcher {
 
     利用zookeeper创建临时有序节点特性，我们在获取锁的时候，在锁节点上创建一个有序节点，并记录创建返回后的节点`lockID`，再获取所有的节点信息，如果最小的节点信息是自己本身，那么久可以成功获取锁，否则的话就监听上一个比自己大的节点`lockIdLess`，如果节点`lockIdLess`被删除的话，则自己就可以成功获取锁。
 
-    ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk2.jpg?raw=true)
+    ![共享锁](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk2.jpg?raw=true)
 
     **代码实现：**
 
@@ -784,15 +784,13 @@ zab协议为分布式协调服务zookeeper专门设计的一种支持`崩溃恢�
 
 #### zab协议的原理
 
-\1. 在zookeeper的主备模式下，通过zab协议来保证集群中各个副本数据的一致性
+1. 在zookeeper的主备模式下，通过zab协议来保证集群中各个副本数据的一致性
 
-\2. zookeeper使用的是单一的主进程来接收并处理所有的事务请求，并采用zab协议，
+2. zookeeper使用的是单一的主进程来接收并处理所有的事务请求，并采用zab协议，把数据的状态变更以事务请求的形式广播到其他的节点
 
-​	把数据的状态变更以事务请求的形式广播到其他的节点
+3. zab协议在主备模型架构中，保证了同一时刻只能有一个主进程来广播服务器的状态变更
 
-\3. zab协议在主备模型架构中，保证了同一时刻只能有一个主进程来广播服务器的状态变更
-
-\4. 所有的事务请求必须由全局唯一的服务器来协调处理，这个的服务器叫leader，其他的叫follower
+4. 所有的事务请求必须由全局唯一的服务器来协调处理，这个的服务器叫leader，其他的叫follower。
 
 ​	leader节点主要负责把客户端的事务请求转化成一个事务提议（proposal），并分发给集群中的所follower节点再等待所有follower节点的反馈。一旦超过半数服务器进行了正确的反馈，那么leader就会commit这条消息
 
@@ -800,17 +798,17 @@ zab协议为分布式协调服务zookeeper专门设计的一种支持`崩溃恢�
 
 ​	**1:什么情况下zab协议会进入崩溃恢复模式**
 
-​	\1. 当服务器启动时
+​		i. 当服务器启动时
 
-​	\2. 当leader服务器出现网络中断、崩溃或者重启的情况
+​		ii. 当leader服务器出现网络中断、崩溃或者重启的情况
 
-​	\3. 集群中已经不存在过半的服务器与该leader保持正常通信
+​		iii. 集群中已经不存在过半的服务器与该leader保持正常通信
 
 ​	**2:zab协议进入崩溃恢复模式会做什么**
 
-​	\1. 当leader出现问题，zab协议进入崩溃恢复模式，并且选举出新的leader。当新的leader选举出来以后，如果集群中已经有过半机器完成了leader服务器的状态同（数据同步），退出崩溃恢复，进入消息广播模式
+​		i. 当leader出现问题，zab协议进入崩溃恢复模式，并且选举出新的leader。当新的leader选举出来以后，如果集群中已经有过半机器完成了leader服务器的状态同（数据同步），退出崩溃恢复，进入消息广播模式
 
-​	\2. 当新的机器加入到集群中的时候，如果已经存在leader服务器，那么新加入的服务器就会自觉进入数据恢复模式，找到leader进行数据同步
+​		ii. 当新的机器加入到集群中的时候，如果已经存在leader服务器，那么新加入的服务器就会自觉进入数据恢复模式，找到leader进行数据同步
 
 ![zab](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk4.jpg?raw=true)
 
