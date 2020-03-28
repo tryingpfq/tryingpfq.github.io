@@ -44,3 +44,14 @@ tags:
 - [x] 虚拟机安装 CentOS7,准备要看看分布式了。[网络设置](https://blog.csdn.net/akipa11/article/details/81414875?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task)
 
 
+
+### 0328
+
+- [x] zookeeper应用(分布式锁，master选举)
+
+### 0329
+- [ ] zookeeper和dubbo结合应用
+- [ ] 责任链模式
+- [ ] 看一个算法
+- [ ] new String("data") 和 new String("data").intera()具体区别
+
