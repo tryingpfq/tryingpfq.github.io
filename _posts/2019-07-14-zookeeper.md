@@ -15,7 +15,12 @@ tags:
 ### 前言
 >现在在分布式当中，基本离不开zookeeper的使用。分布式环境下，主要的特点的分布性、并发性、无序性，自然也会面临一些问题，比如（网络通信：网络本身的不可靠性，因此会涉及到一些网络通信的问题；网络分区：也就是我们通常说的脑裂，当网络发生异常导致分布式系统中部分节点之间的网络延时不断增大，最终导致组成分布式架构的所有节点，只有部分节点能够正常通信；三态：在分布式架构中，就三种状态，成功、失败和超时；分布式事务：ACID，原子性、一致性、隔离性、持久性）。
 
-### 中性化和去中性化
+**看完这篇文章，可以对zk有些感性的认识，比如单机、集群如何安装和搭建，一些基本概念，操作命令，客户端连接，已经一些应用场景和实现过程。**
+
+
+
+### 中心化和去中心化
+
 假如在分布式系统中，所有节点都围绕一个中心节点去通信或者数据同步，那么假如当这个节点挂掉的时候，这个分布式系统就蹦了。所以在分布式中，每一个节点都是高度自治的，节点之间可以自由连接，任何一个节点都可能成为阶段性的中心，但不具备强制性的中性控制能力。分布式架构里面，很多的架构思想采用的是：当集群发生故障的时候，集群中的人群会自动“选举”出一个新的领导。
 最典型的是： zookeeper / etcd
 
@@ -48,15 +53,17 @@ Eventually consistent：数据的最终一致性
 
 
 
+### ZK源码分析
+
+
+
 
 ### 基本概念
 zookeeper是一个典型的分布式协调框架，具有分布式数据一致性的解决方案。它主要用在数据的发布/订阅（配置中心:disconf）、 负载均衡（dubbo利用了zookeeper机制实现负载均衡） 、命名服务、master选举(kafka、hadoop、hbase)、分布式队列、分布式锁。zookeeper的特性，数据一致性：从同一个客户端发起的事物请求，最终会严格按照顺序应用到zookeeper中，原子性：所有的事务请求的处理结果在整个集群中的所有机器上的应用情况是一致的，也就是说，要么整个集群中的所有机器都成功应用了某一事务、要么全都不应用，可靠性：一旦服务器成功应用了某一个事务数据，并且对客户端做了响应，那么这个数据在整个集群中一定是同步并且保留下来的，实时性：一旦一个事务被成功应用，客户端就能够立即从服务器端读取到事务变更后的最新数据状态；（zookeeper仅仅保证在一定时间内，近实时）。
 
 
 ### zookeeper的安装
-[下载zookeeper](http://apache.fayea.com/zookeeper/zookeeper-3.5.5/) 目前版本是3.5.5,下面是基于Linux的安装，可以使用虚拟机，也方便进行集群搭建。
-
-[下载](http://mirrors.hust.edu.cn/apache/zookeeper/stable/)
+[下载zookeeper](http://apache.fayea.com/zookeeper/zookeeper-3.5.5/) ,[下载](http://mirrors.hust.edu.cn/apache/zookeeper/stable/)  目前版本是3.5.5,下面是基于Linux的安装，可以使用虚拟机，用Xsheel连接，也方便进行集群搭建。
 
 #### 单机搭建
 
@@ -154,10 +161,6 @@ CREATE /READ/WRITE/DELETE/ADMIN
 **会话**
 
 zookeeper 中客户端启动时会与服务器建立一个 TCP 连接，从第一次连接建立开始，客户端会话的生命周期就开始了，通过这个连接，客户端能够通过心跳检测与服务器保持有效的会话，也能够向服务器发送请求并接受响应，还能够接收来自服务器的 watch 事件通知。
-
-
-
-
 
 ### 命令操作
 
@@ -321,12 +324,393 @@ public class ClienDemo implements Watcher {
 
 
 
-### 应用
+### 应用场景
 
 * 统一命名服务
+
 * 配置管理
+
+  实现配置中心有两种模式：push、pull。
+
+  长轮训：zookeeper采用的是推拉相结合的方式。 客户端向服务器端注册自己需要关注的节点。一旦节点数据发生变化，那么服务器端就会向客户端发送watcher事件通知。客户端收到通知后，主动到服务器端获取更新后的数据
+
+  
+
 * 分布式锁
-* 
+
+  分布式锁，通常的一些实现方式,`redis`,`数据库`(创建一个表，通过唯一索引方式)
+
+  zookeeper实现
+
+  * **排他锁**
+
+    **实现原理：**
+
+    利用Zookeeper不能重复创建一个节点的特性。可以在zookeeper服务端创建`/Lock`节点，然后所有客户端需要获取锁的时候在改节点下创建lock节点，如果创建成功，那么说明获取锁成功，释放的时候，把这个节点删除，其他客户端就可以再次竞争该锁。
+
+    ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk1.jpg?raw=true)
+
+    **代码实现：**基于javaAPI简单 实现
+
+    ```java
+    public class LockOne {
+    
+        private static final String LOCK_PATH = "/Locks/LockOne";
+    
+        private static ZkCliDemo zkCli;
+    
+        private static ZooKeeper zk;
+    
+        public LockOne(){
+            zkCli = new ZkCliDemo();
+        }
+    
+    
+        public void connect(){
+            try {
+                zk = zkCli.connectZookeeper();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        /**
+         * 获取锁
+         * @return
+         */
+        public boolean lock(){
+            if (zk == null) {
+                return false;
+            }
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+            try {
+                watchNode(countDownLatch);
+                countDownLatch.await();
+                try {
+                    doLock();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+    
+        private void doLock() throws Exception {
+            zkCli.createTempNode(LOCK_PATH, "123");
+        }
+    
+        /**
+         * 监听
+         * @param countDownLatch
+         */
+        private void watchNode(CountDownLatch countDownLatch){
+            try {
+                if (zk.exists(LOCK_PATH,true) == null) {
+                    System.err.println("当前锁节点不存在");
+                    countDownLatch.countDown();
+                }else{
+                    zk.exists(LOCK_PATH, watchedEvent -> {
+                        System.err.println("zkExit watch");
+                        if (watchedEvent.getType() == Watcher.Event.EventType.NodeDeleted) {
+                            System.err.println("delete Node");
+                            countDownLatch.countDown();
+                        }
+                    });
+                }
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    
+        /**
+         * 释放锁
+         */
+        public void unLock(){
+            try {
+                zkCli.deleteNode(LOCK_PATH);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            }
+        }
+    
+    ```
+
+  * 共享锁
+
+    **实现原理：**
+
+    利用zookeeper创建临时有序节点特性，我们在获取锁的时候，在锁节点上创建一个有序节点，并记录创建返回后的节点`lockID`，再获取所有的节点信息，如果最小的节点信息是自己本身，那么久可以成功获取锁，否则的话就监听上一个比自己大的节点`lockIdLess`，如果节点`lockIdLess`被删除的话，则自己就可以成功获取锁。
+
+    ![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk2.jpg?raw=true)
+
+    **代码实现：**
+
+    基于java api 实现
+
+    ~~~java
+     private static final String LOCK_PATH = "/Locks/";
+    
+        private static ZkCliDemo zkCli;
+    
+        private static ZooKeeper zk;
+    
+        private String lockID;
+    
+        private CountDownLatch countDownLatch = new CountDownLatch(1);
+        public LockTwo(){
+            zkCli = new ZkCliDemo();
+        }
+    
+        public void connect(){
+            try {
+                zk = zkCli.connectZookeeper();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    
+        public boolean lock(){
+            try {
+                lockID = zkCli.createTempSeqNode(LOCK_PATH, "12");
+                System.err.println(Thread.currentThread().getName()+ "-> 成功创建,lock节点[" +lockID+ "]"+"开始竞争锁");
+                List<String> childNodes = zkCli.getChilds("/Locks");
+                //排序
+                SortedSet<String> sortedSet = new TreeSet<>();
+                for (String str : childNodes) {
+                    sortedSet.add(LOCK_PATH + str);
+                }
+                String first = sortedSet.first();
+                if(lockID.equals(first)){
+                    //表示成功获取锁
+                    System.err.println(Thread.currentThread().getName()+ "-> 成功获取锁,lock节点[" +lockID+ "]");
+                    return true;
+                }
+                //比当前节点更小的节点集合
+                SortedSet<String> lessNodes = sortedSet.headSet(first);
+                if (!lessNodes.isEmpty()) {
+                    String preLockId = lessNodes.last();
+                    zk.exists(preLockId,watchedEvent -> {
+                        if (watchedEvent.getType() == Watcher.Event.EventType.NodeDeleted) {
+                            countDownLatch.countDown();
+                        }
+                    });
+                    countDownLatch.await(ZkCliDemo.SESSION_TIME_OUT, TimeUnit.MILLISECONDS);
+                    System.err.println(Thread.currentThread().getName()+ "成功获取锁:[" +lockID+ "]");
+                }
+                return true;
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+    
+        public void unlock(){
+            System.err.println(Thread.currentThread().getName()+ "开始释放锁:[" +lockID+ "]");
+            try {
+                zkCli.deleteNode(lockID);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (KeeperException e) {
+                e.printStackTrace();
+            }
+        }
+    
+        public static void main(String[] args) {
+            final CountDownLatch countDownLatch = new CountDownLatch(10);
+            for (int i = 0; i < 10; i++) {
+                new Thread(() ->{
+                    LockTwo lockTwo = new LockTwo();
+                    lockTwo.connect();
+                    countDownLatch.countDown();
+                    try {
+                        countDownLatch.await();
+                        lockTwo.lock();
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }finally {
+                        lockTwo.unlock();
+                    }
+                }).start();
+            }
+        }
+    }
+    ~~~
+
+    
+
+* 负载均衡
+
+  使得客户端请求或者数据分摊多个计算机单元上。
+
+* master 选举
+
+  为了让服务高可用，也就是7*24小时可用， 99.999%可用。
+
+  在集群中，存在Master - Slave 模式，那么怎么利用Zookeeper进行Master选举呢
+
+  **实现原理**：Zookeeper不能重复创建一个节点的特性，每个客户端启动的时候，去zookeeper服务器上创建Master节点，创建成功则被选中为Master,否则就获取从zookeeper获取Master服务器信息，并且要监听这个节点，以便master挂掉后，重新进行选举。话不多说，直接看代码实现
+
+  **代码实现**:zkClient的实现
+
+  ~~~java
+  /** 基于ZkClient 实现的Master选举过程
+   * @Author tryingpfq
+   * @Date 2020/3/28
+   */
+  public class MasterSelector {
+      private ZkClient zkClient;
+  
+      /**
+       * 注册节点内容变化
+       */
+      private IZkDataListener dataListener;
+  
+      private ServerInfo mySelf;
+  
+      private ServerInfo master;
+  
+      private static boolean isRunning = false;
+  
+      private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+  
+      public MasterSelector(ZkClient zkClient, ServerInfo serverInfo) {
+          this.zkClient = zkClient;
+          this.mySelf = serverInfo;
+  
+          this.dataListener = new IZkDataListener() {
+              @Override
+              public void handleDataChange(String s, Object o) throws Exception {
+  
+              }
+  
+              @Override
+              public void handleDataDeleted(String s) throws Exception {
+                  System.err.println("server:" + master.getServerId() + " has delete");
+                  master = null;
+                  //两秒之后重新进行选举
+                  executorService.schedule(() ->{
+                      chooserMaster();
+                  },2,TimeUnit.SECONDS);
+              }
+          };
+  
+      }
+  
+      public void start(){
+          if (!isRunning) {
+              isRunning = true;
+              System.out.println("server:"+ mySelf.getServerId()+" start");
+              //注册节点事件
+              zkClient.subscribeDataChanges(ZkCons.MASTER_PATH, dataListener);
+              chooserMaster();
+          }
+  
+      }
+  
+      private void chooserMaster(){
+          if (!isRunning) {
+              System.out.println("server:"+ mySelf.getServerId() + " is stop");
+              return;
+          }
+          try {
+              zkClient.createEphemeral(ZkCons.MASTER_PATH,mySelf);
+              master = mySelf;
+              System.out.println("server:" + master.getServerId() + "成功选举为master");
+  
+              //触发故障
+              executorService.schedule(() -> {
+                  releaseMaster();
+              }, 5, TimeUnit.SECONDS);
+          } catch (RuntimeException e) {
+              ServerInfo info = zkClient.readData(ZkCons.MASTER_PATH);
+              if (info == null) {
+                  checkIsMaster();
+              }else{
+                  master = info;
+              }
+          }
+  
+      }
+  
+      public void stop(){
+          if (isRunning) {
+              isRunning = false;
+              executorService.shutdownNow();
+              zkClient.unsubscribeDataChanges(ZkCons.MASTER_PATH, dataListener);
+              releaseMaster();
+          }
+      }
+  
+      /**
+       * 模拟master故障
+       */
+      public void releaseMaster(){
+          if (master == null) {
+              return;
+          }
+          if (checkIsMaster()) {
+              zkClient.delete(ZkCons.MASTER_PATH);
+          }
+      }
+  
+      public boolean checkIsMaster(){
+          if (master == null || mySelf == null) {
+              return false;
+          }
+          return mySelf.getServerId() == master.getServerId();
+      }
+  
+      public class MasterChoosterTest {
+  
+      /**
+       * 需要多模拟几个进程执行 就能看出master故障后重新选举的master
+       * @param args
+       * @throws InterruptedException
+       */
+      public static void main(String[] args) throws InterruptedException {
+          ZkClient zkClient = new ZkClient(ZkCons.CONNECT_STR, ZkCons.SESSION_TIME_OUT, 			ZkCons.CONN_TIME_OUT);
+  
+          ServerInfo serverInfo = new ServerInfo(1, "try_" + 1);
+  
+          MasterSelector selector = new MasterSelector(zkClient, serverInfo);
+          selector.start();
+          try {
+              TimeUnit.SECONDS.sleep(1);
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          }
+          Thread.sleep(50000);
+      }
+  
+  ~~~
+
+  
+
+* 分布式队列
+
+  目前好像常用的还是消息中间件(ActiveMQ、kafka.......)，但用zk也是可以实现的。
+
+  实现思路：先进先出队列
+
+  1. 通过getChildren获取指定根节点下的所有子节点，子节点就是任务
+
+  2. 确定自己节点在子节点中的顺序
+
+  3. 如果自己不是最小的子节点，那么监控比自己小的上一个子节点，否则处于等待
+
+     接收watcher通知，重复流程
+      
+
 * 
 
 
