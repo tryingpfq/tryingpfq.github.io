@@ -810,7 +810,7 @@ zab协议为分布式协调服务zookeeper专门设计的一种支持`崩溃恢�
 
 ​		ii. 当新的机器加入到集群中的时候，如果已经存在leader服务器，那么新加入的服务器就会自觉进入数据恢复模式，找到leader进行数据同步
 
-![zab](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk4.jpg?raw=true)
+![zab](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-zk4.jpg)
 
 ​	
 
