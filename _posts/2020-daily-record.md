@@ -7,7 +7,7 @@ author:     tryingpfq
 header-img: img/post-bg-daily1.jpeg
 catalog: true
 tags:
-    - 分布式
+    - dayilyPlan
 ---
 
 ### plan and record
@@ -50,8 +50,8 @@ tags:
 - [x] zookeeper应用(分布式锁，master选举)
 
 ### 0329
-- [ ] zookeeper和dubbo结合应用
-- [ ] 责任链模式
+- [x] zookeeper+dubbo感性认识
+- [x] 责任链模式
 - [ ] 看一个算法
-- [ ] new String("data") 和 new String("data").intera()具体区别
+- [x] new String("data") 和 new String("data").intern()具体区别 ![blog](https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html)
 
