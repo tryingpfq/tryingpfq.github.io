@@ -55,3 +55,6 @@ tags:
 - [ ] 看一个算法
 - [x] new String("data") 和 new String("data").intern()具体区别 ![blog](https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html)
 
+### 0330
+- [x] zookeeper + dubbo 一个简单demo实现
+- [ ] 开始看zk源码

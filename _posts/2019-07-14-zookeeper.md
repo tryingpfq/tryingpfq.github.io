@@ -848,3 +848,4 @@ zookeeper.out  运行日志
 
 `启动过程` `节点创建如何保持唯一性` `leader选举实现原理 ZAB ` `数据存储和加载` `leader 和 follower数据同步、通信、协议`  
 
+  [源码搭建](https://segmentfault.com/a/1190000021451833)
