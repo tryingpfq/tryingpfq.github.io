@@ -58,3 +58,6 @@ tags:
 ### 0330
 - [x] zookeeper + dubbo 一个简单demo实现
 - [ ] 开始看zk源码
+
+### 0331
+- [x] 开始看zk源码
