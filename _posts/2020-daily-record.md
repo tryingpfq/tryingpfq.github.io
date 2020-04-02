@@ -65,3 +65,9 @@ tags:
 ### 0401
 - [x] 开始看zk源码
 - [ ] 学习dubbo
+
+###  0402
+
+- [x] 字节码，看了下[美团字节码](https://tech.meituan.com/2019/09/05/java-bytecode-enhancement.html),理解的东西有，为什么方法中可以使用this,内部类对外部的引用问题
+- [ ] dubbo服务调用，但一直没有成功调用，不知道为啥，没找到原因。
+- [ ] 
