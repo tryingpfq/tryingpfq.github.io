@@ -73,8 +73,9 @@ tags:
 
 ### 0403
 
-- [ ] ASM
-- [ ] lambda表达式内部类的创建
-- [ ] dubbo 源码
+- [x] ASM
+- [x] lambda表达式内部类的创建
+- [x] dubbo 源码(主要就看了下SPI)
+- [x] 字节码
 
  
