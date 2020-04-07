@@ -107,7 +107,7 @@ tags:
 | **0404** | 1: NIO Socket 其实我觉得这个东西还是比较难的，和操作系统有关呀。<br>2: 虚拟机安装 CentOS7,准备要看看分布式了。[网络设置](https://blog.csdn.net/akipa11/article/details/81414875?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task) |
 | **0405** | 1: activeMQ  纯属了解                                        |
 | **0406** | 1: kafka 纯属了解<br>                                        |
-|          |                                                              |
+| **0407** | 1: 迭代器模式，这个主要在平时容器中见得比较多，并发操作异常concurrentmodificationexception，要知道这个异常是怎么发生的，如何去规避这种问题，或者怎么去设计一个，可基于快照的迭代器。<br>2: 线程池ThreadPoolExecutor。<br> |
 |          |                                                              |
 |          |                                                              |
 
