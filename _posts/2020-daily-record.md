@@ -110,7 +110,7 @@ tags:
 | **0407** | 1: 迭代器模式，这个主要在平时容器中见得比较多，并发操作异常concurrentmodificationexception，要知道这个异常是怎么发生的，如何去规避这种问题，或者怎么去设计一个，可基于快照的迭代器。<br>2: 线程池ThreadPoolExecutor。<br> |
 | **0408** | 1: 开始学习redis <br>2: AQS AbstractQueuedSynchronizer,不知道为啥，我总觉得这个好难。[美团技术博客](https://tech.meituan.com/2019/12/05/aqs-theory-and-apply.html)<br>3: |
 | **0409** | 1：《Redis设计与实现》看了第一部分。<br>2:  算法，回溯问题，比如N皇后问题。<br> |
-| **0410** | 1: 访问者设计模式，一个问题：为什么双分派语言可以不需要访问者模式。<br> |
+| **0410** | 1: 访问者设计模式，一个问题：为什么双分派语言可以不需要访问者模式。<br  > |
 |          |                                                              |
 
 
