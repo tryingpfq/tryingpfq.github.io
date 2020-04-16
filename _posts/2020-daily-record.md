@@ -92,8 +92,8 @@ tags:
 | **0329** | 1: zookeeper+dubbo感性认识<br>2: 责任链模式 <br>3: new String("data") 和 new String("data").intern()具体区别 [blog](https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html) |
 | **0330** | 1: zookeeper + dubbo 一个简单demo实现 <br>2: 开始看zk源码    |
 | **0331** | 1: 继续看zk源码                                              |
-|          |                                                              |
-|          |                                                              |
+|          |                                                            |
+
 
 
 
@@ -115,8 +115,8 @@ tags:
 | **0412**  |                                                              |
 | **0413**  | 1: 将common-resource模块基本功能实现完成，但还有很多细节没处理。<br> |
 | **0414**  |                                                              |
-| **0415*** | 1: [JMX](https://cloud.tencent.com/developer/article/1361455) 好像没干什么 |
-|           |                                                              |
+| **0415**  | 1: [JMX](https://cloud.tencent.com/developer/article/1361455) 好像没干什么 |
+| **0416**  | 1: 开始看《Mavan权威指南》。<br> 2: 开始看《Tomcat架构解析》                                                                |
 |           |                                                              |
 |           |                                                              |
 
