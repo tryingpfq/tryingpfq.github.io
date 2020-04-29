@@ -129,6 +129,7 @@ tags:
 | **0426** | 1:  spring boot 自动配置 源码                                |
 | **0427** |                                                              |
 | **0428** | 1: Tomcat客户端请求过程。                                    |
+| **0429** | 1: 主要还是看这篇博客 [TCP SOCKET](https://www.cnblogs.com/f-ck-need-u/p/7623252.html) |
 
 
 
