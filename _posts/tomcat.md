@@ -15,8 +15,6 @@
 
 
 
-
-
 ### 服务端启动流程
 
  //TODO 
@@ -240,7 +238,9 @@
 
 请求流程就先看这么多了，里面东西太多了，有没有发现，其实用Netty是完全可以做的，而且对于线程处理，应该会更优一些。
 
+tomcat NIO模型
 
+![](https://github.com/tryingpfq/tryingpfq.github.io/blob/master/picture/bg-tomcat1.jpg?raw=true)
 
 ### catalina
 
