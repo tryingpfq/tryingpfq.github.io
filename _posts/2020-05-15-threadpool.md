@@ -286,7 +286,7 @@ tags:
            * 如果运行到这里，首先说明一个问题，就是此时工作中的线程，已经超过核心线程了。
            * 所以要先判断是否为运行状态，并且阻塞队列未满。就会进入下面这个if
            */
-          if (isRunning(c) && workQueue.offer(command)) {
+          if (isRunning(c) && workQueue.offer(command)) {	
               //再次重新获取ctl状态为值
               int recheck = ctl.get();
                /*
@@ -297,7 +297,7 @@ tags:
                * 就需要执行拒绝策略对该任务进行处理，整个方法返回
                * 这里为什么会出现这个问题，可能是担心其他线程对这个线程池状态有修改。
                */
-              if (! isRunning(recheck) && remove(command))
+              if (! isRunning(recheck) && remove(command))	
                   reject(command);
            
            /* 执行到这里，说明任务已经条件到阻塞队列中去了，上面移除失败了
@@ -624,15 +624,21 @@ tags:
            
            * 如果allowCoreThreadTimeOut=true，并且等待队列有任务，至少保留一个worker；
            * 如果allowCoreThreadTimeOut=false，workerCount不少于corePoolSize。
+           * 
+           * 也就是说 如果线程状态是RUNNING 或者SHUTDOWN 就会进入下面方法
            */
           if (runStateLessThan(c, STOP)) {
               if (!completedAbruptly) {
+                  // 若允许核心线程超时回收，则最低线程数量为0，否则为核心线程数
                   int min = allowCoreThreadTimeOut ? 0 : corePoolSize;
                   if (min == 0 && ! workQueue.isEmpty())
                       min = 1;
+                  
                   if (workerCountOf(c) >= min)
                       return; // replacement not needed
               }
+              // 这里说明线程是异常引起，就会重构线程放入线程池，
+              //或者上面当前线程小于最低线程数，也会添加
               addWorker(null, false);
           }
       }
@@ -646,6 +652,16 @@ tags:
   线程池中，在空闲状态的情况下，最少会保留多少个核心线程？
 
   *这个看完上面应该就知道，如果`allowCoreThreadTimeOut`=true的话，就会对核心线程进行回收，然后`processWorkerExit`方法会进行判断，至少要保留一个核心线程。*理解错误，即使*这个看完上面应该就知道，如果`allowCoreThreadTimeOut`=true，但没有任务了的话，核心线程应该都会被回收的。
+
+
+
+### TODO
+
+线程池监控
+
+动态修改线程池线程数量
+
+
 
 ### 结尾
 
