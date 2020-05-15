@@ -645,4 +645,5 @@ tags:
 
 相信如果能看到这里，至少对线程池会有个基本了解和任务，以后使用的时候也可以避免一些错误，毕竟线程池的使用，在日常开发是不可避免的，而且这不仅仅是一种技术，我觉得更是解决问题的一种思想。
 
-以上要部分内容来自 [美团技术博客](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)    [深入理解java线程池](https://juejin.im/entry/58fada5d570c350058d3aaadl)  必须感谢。
+以上要部分内容来自 [美团技术博客](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)    [深入理解java线程池](https://juejin.im/entry/58fada5d570c350058d3aaad)  必须感谢。
+
