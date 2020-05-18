@@ -297,7 +297,7 @@ tags:
                * 就需要执行拒绝策略对该任务进行处理，整个方法返回
                * 这里为什么会出现这个问题，可能是担心其他线程对这个线程池状态有修改。
                */
-              if (! isRunning(recheck) && remove(command))	
+              if (! isRunning(recheck) && remove(command))	//这里面其实是双重检查
                   reject(command);
            
            /* 执行到这里，说明任务已经条件到阻塞队列中去了，上面移除失败了
@@ -308,7 +308,7 @@ tags:
            * 如果判断workerCount大于0，则直接返回，说明有工作线程
            * 在workQueue中新增的command会在将来的某个时刻被执行。
            */
-              else if (workerCountOf(recheck) == 0)
+              else if (workerCountOf(recheck) == 0)//这里面其实是双重检查
                   addWorker(null, false);
           }
           /*
