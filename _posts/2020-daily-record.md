@@ -156,7 +156,7 @@ tags:
 | **0516** | 1: [pipeline](http://tryingpfq.club/2020/05/15/threadpool/)  |
 | **0517** | 1: bytebuf                                                   |
 | **0518** | 1：netty 内存分配                                            |
-|          |                                                              |
+| **0519** | 1: spirng管理hibernate事务                                   |
 |          |                                                              |
 |          |                                                              |
 |          |                                                              |
