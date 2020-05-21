@@ -49,7 +49,7 @@ get()方法：
         }
         return setInitialValue();
     }
-
+    
     ThreadLocalMap getMap(Thread t) {
         return t.threadLocals;
     }
@@ -66,7 +66,7 @@ set()方法：
         else
             createMap(t, value);
     }
-    
+
 
 显然，在set的时候，如果遇到hash冲突的时候怎么去解决了。其实ThreadLocalMap结构比较简单，没有采用next指针，也就是解决冲突的时候不是链表的方式，而是采用线性探测的方法。也就是说，每次根据key，计算出hashcode值，确定位置，如果已经被占用了，那么久需要用固定算法，以固定步长左右寻找空位置。具体代码实现就不看了。
 
@@ -88,7 +88,7 @@ TheadLocalMap的数据结构比较简单，里面就是维护一个Entry，其�
      static class Entry extends WeakReference<ThreadLocal<?>> {
             /** The value associated with this ThreadLocal. */
             Object value;
-
+    
             Entry(ThreadLocal<?> k, Object v) {
                 super(k);
                 value = v;
@@ -118,12 +118,22 @@ Entry继承自WeakReference（弱引用，生命周期只能存活到下次GC前
 目前避免ThreadLocalMap内存泄漏的方法可以下面这样处理：
 
     ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
-	try {
+    try {
     	threadLocal.set(new Session("val", "val"));
    		 // 其它业务逻辑
 	} finally {
   	  threadLocal.remove();
 	}
+
+
+
+### 比较
+
+ThreadLocal 和 FastThreadLocal，这里就不展开分析了，可以看下FastThreadLocal的源码，如果业务线程用的是FastThreadLocalThread的时候，用这个还是效率比较快的，当然这个也兼容ThreadLocal。
+
+其实实现很简单，对于每个FastThreadLocal都会有一个唯一的index,在每个FastThreadLocalThread线程中，都会有一个InternalThreadLocalMap，map就有个object[]数组来进行缓存，数据角标就是对应的FastThreadLocal的index,在jdk的中，缓存的是以ThreadLocal作为key。可[参考](http://www.jiangxinlingdu.com/interview/2019/07/01/fastthreadlocal.html)
+
+
 
 
 ### 总结
