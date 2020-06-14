@@ -328,3 +328,80 @@ public Person getManager(){
 
 这个问题怎么说呢，也就是在不能修改原始类源码，但又需要添加一些额外的方法，那么久可以自己扩展一个类，这个类作为原始类的子类。
 
+
+
+#### 重新组织数据
+
+1：`Self Encapsulate Field 自封装字段`
+
+这点怎么说呢，其实就是在进行“public字段访问”的时候，到底是直接访问字段名，还是通过一个方法来获取。比如想访问超类的一个字段，一般是通过方法区访问可能会好些。
+
+```java
+private int _low,_high;
+boolean includes(int arg){
+    return arg >= _low && arg <= _high;
+}
+
+//重构为
+boolean includes(int arg){
+    return arg >= getLow() && arg <= getHigh();
+}
+```
+
+
+
+2：`Replace Data Value With Object 以对象取代数据值`
+
+就是你有一个数据项，需要与其他数据和行为一起使用才有意义。将数据项变成对象。还是直接看例子吧
+
+```java
+//订单类 需要用到customer
+class Order{
+    public Order(String customer){
+        this.customer = customer;
+    }
+}
+
+class Customer {
+
+	public Customer(String name){
+
+		_name = name;
+
+	}
+
+	private final String _name;
+
+}
+
+
+//如果在Order中 不是一个String 而是一个customer对象 会不会更好扩展呢
+```
+
+
+
+3：`Change Value to Reference 将值对象改为引用对象`
+
+
+
+4：`Change Reference to Value 将引用对象改为值对象`
+
+
+
+5：`Replace Array With Object 以对象取代数组`
+
+假如有这样一个数组，就是每个元素代表不同的含义。那么，这个就可以换成一个对象，然后每个元素就是一个字段。
+
+```java
+String[] row = new String[3];
+row[0] = "Liverpool";
+row[1] = "15";
+
+//向上面的这种就可以该成
+Performance row = new Performance();
+row.setName("Liverpool");
+row.setWins("15");
+
+//其实在开发中，可能会用到唯一的一对K V的 Pair
+```
+
