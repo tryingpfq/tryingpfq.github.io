@@ -403,5 +403,541 @@ row.setName("Liverpool");
 row.setWins("15");
 
 //其实在开发中，可能会用到唯一的一对K V的 Pair
+
+```
+
+
+
+6：`Duplicate Observed Data 复制 “被监视数据”`
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 简化条件表达式
+
+
+
+`1：Decompose Conditional 分解条件表达式`
+
+假如有一个复杂的表达语句，那么是否可以考虑从if then else段落中提炼出独立的函数来判断呢。
+
+```java
+if(data.before(SUMMER_START) || data.after(SUMMER_END)){
+    charge = quantity * _winterRate + _winterServiceCharge;
+}else{
+    charge = quantity * _summerRate;
+}
+
+// 是否可以重构为下面的代码呢
+if(notSummer(date)){
+    charge = winterCharge(quantity);
+}else{
+    charge = summerCharge(quantity);
+}
+```
+
+
+
+2：`Consolidate Conditional Expression 合并条件表达式`
+
+假如有一些列条件测试，都得到相同的结果，将这些测试合并为一个条件表达式，并将这个条件表达式提炼成一个独立的函数。
+
+```java
+double disabilityAmount(){
+    if(_senitory < 2){
+        return 0;
+    }
+    if(_monthsDisabled > 12){
+        return 0;
+    }
+    if(_isPartTime){
+        return 0;
+    }
+}
+
+//是否可以考虑重构为
+double disabilityAmount(){
+   if(isNotEligibleForDisablity())
+       return 0;
+}
+
+```
+
+
+
+3：`Consolidate Duplicate Conditional Fragments 合并重复条件的条件片段`
+
+假如在条件表达式的每个分支上有着相同的一段代码。那么可以考虑将这段重复的代码移到条件表达式之外。
+
+```java
+if(isSpecilaDeal()){
+    total = price * 0.95;
+    send();
+}else{
+    total = price * 0.8;
+    send(); 
+}
+
+//重构为
+if(isSpecilaDeal()){
+    total = price * 0.95;
+}else{
+    total = price * 0.8;
+}
+send();
+```
+
+
+
+4：Remove Control Flag 移除控制标记
+
+在系列的布尔表达式中，某个变量带有“控制标记”的作用，可以考虑能否break或者return语句来替换。
+
+```java
+void checkSecurity(String[] people){
+
+	boolean found = false;
+
+	for (int i = 0; i < people.length; i++){
+
+        if (!found){
+
+            if (people[i].equals("Don")){
+
+                sendAlert();
+
+                found = true;
+
+            }
+
+        	if (people[i].equals("John")){
+
+            	sendAlert();
+
+       		 	found = true;
+            }
+		}
+}
+        
+//是否可以重构为下面代码呢
+void checkSecurity(String[] people){
+
+    for (int i = 0; i < people.length; i++){
+
+        if (people[i].equals("Don") || people[i].equals("John")){
+
+        	sendAlert();
+
+   			break;
+        }
+    }
+}
+
+```
+
+
+
+5：`Replace Nested Conditional With Guard Clauses 以卫语句取代嵌套条件表达式`
+
+函数中的条件逻辑使人难以看清正常的执行路径。使用卫语句表现所有特殊情况。
+
+```java
+double getPayAmount(){
+
+    double result;
+
+    if (_isDead)
+        result = deadAmount();
+
+    else {
+
+   		if (_isSeparated)
+            result = separatedAmount();
+
+   		 else {
+
+    		if (_isRetired)
+                result = retiredAmount();
+
+   			 else 
+                 result = normalPayAmount();	
+         }
+    }
+    return result;
+}
+
+//是否可以重构为
+double getPayAmount(){
+
+    if (_isDead) return deadAmount();
+
+    if (_isSeparated) return separatedAmount();
+
+    if (_isRetired) return retiredAmount();
+
+    return normalPayAmount();
+
+}
+```
+
+
+
+6：`Replace Conditional With Polymorphism 以多态取代条件表达式`
+
+你手上有个条件表达式，它根据对象类型的不同而选择不同的行为。
+
+将这个条件表达式的每个分支放进一个子类内的覆写函数中，然后将原始函数声明为抽象函数。
+
+```java
+double getSpeed(){
+    switch(_type){
+        case EUROPEAN:
+            return getBaseSpeed();
+        case AFRICAN:
+            return getBaseSpeed()- getLoadFactor()* _numberOfCoconuts;
+        case NORWEGIAN_BLUE:
+            return (_isNailed)? 0 : getBaseSpeed(_voltage);
+    }
+    throw new RuntimeException("Should be unreachable");
+}
+
+//其实这种情况一般可以考虑用枚举来处理，或者策略模式
+```
+
+7：Introduce Null Object 引入Null对象
+
+你需要再三检查某对象是否为null。将null值替换为null对象。看案例吧
+
+```java
+
+
+class Customer{
+    public String getName(){...}
+
+   	public BillingPlan getPlan(){...}
+
+    public PaymentHistory getHistory(){...}
+}
+
+   
+Customer customer = site.getCustomer();
+
+BillingPlan plan;
+
+if (customer == null)plan = BillingPlan.basic();
+
+else plan = customer.getPlan();
+
+...
+
+String customerName;
+
+if (customer == null)customerName = "occupant";
+
+else customerName = customer.getName();
+
+...
+
+int weeksDelinquent;
+
+if (customer == null)weeksDelinquent = 0;
+
+else weeksDelinquent = customer.getHistory().getWeeksDelinquentInLastYear();
+```
+
+对于上面这种问题该怎么去重构呢，首先是否考虑引用一个空的Customer对象，并且对上面方法提供默认的实现，那么在上面是否就可以少去对null的判断
+
+```java
+class NullCustomer extends Customer implements Null{
+    public boolean isNull{
+        return true;
+    }
+    
+    String getName(){
+        return "occupant";
+    }
+	
+   	Plan getPlan(){
+      return  BillingPlan.basic();
+	}
+}
+
+class Customer{
+    static Customer newNull(){
+		return new NullCustomer();
+	}
+}
+
+class Site...
+
+    Customer getCustomer(){
+
+    	return (_customer == null) ? Customer.newNull():_customer;
+
+}
+```
+
+
+
+8：`Introduce Assertion 引入断言`
+
+某一段代码需要对程序状态做出某种假设。以断言明确表现这种假设。这个平时还是可以看到，但自己比较少用。
+
+```java
+double getExpenseLimit(){
+
+	// should have either expense limit or a primary project
+
+	return (_expenseLimit != NULL_EXPENSE) ? _expenseLimit: _primaryProject.getMemberExpenseLimit();
+
+}
+
+double getExpenseLimit(){
+
+    //这里可以预先判断bug
+	Assert.isTrue (_expenseLimit != NULL_EXPENSE || _primaryProject != null);
+
+	return (_expenseLimit != NULL_EXPENSE) ? _expenseLimit: _primaryProject.getMemberExpenseLimit();
+
+}
+```
+
+注意，不要滥用断言。请不要使用它来检查“你认为应该为真”的条件，请只使用它来检查“一定必须为真”的条件。滥用断言可能会造成难以维护的重复逻辑。
+
+
+
+
+
+#### 简化函数调用
+
+在面向对象编程中，接口是一个很重要的概念，然后接口的调用，也就是函数的调用。在开发中，必须明确的将“修改对象状态”的函数和“查询对象状态”的函数区分开，如果混在一起，就会很麻烦。
+
+1：`Rename Method 函数改名`
+
+这个其实在平时也遇到过，就是如果一个函数名没有完全的表述这函数的用途，那么就需要进行修改。
+
+
+
+2：`Add Parameter 添加参数`
+
+如果某个函数，需要从调用端得到更多的信息，那么可能就会需要对函数添加参数。
+
+
+
+3：`Remove Parameter 移除参数`
+
+如果函数本体不再需要某个参数，那么久应该考虑将其删掉。相必，大家在平时，看到多余的参数可能也不想去删除，觉得没什么影响。其实，对于函数的参数来说，就表明了这个函数需要的信息，其他人调用的时候，就必须要去考虑参数的用途，所以多余的必须要删除掉。
+
+
+
+4： `Separate Query from Modifier 将查询函数和修改函数分开`
+
+某个函数既返回对象状态值，又修改对象状态。建立两个不同的函数，其中一个负责查询，另一个负责修改。但确实有时候有查询再复制的操作，那怎么整呢。
+
+下面是一条好规则：任何有返回值的函数，都不应该有看得到的副作用。应该是说查询的函数，不应该有修改操作。
+
+
+
+5：`Parameterize Method 令函数携带参数`
+
+若干函数做了类似的工作，但在函数本体中却包含了不同的值。建立单一函数，以参数表达那些不同的值。
+
+
+
+6：`Replace Parameter With Explicit Methods 以明确函数取代参数`
+
+你有一个函数，其中完全取决于参数值而采取不同行为。针对该参数的每一个可能值，建立一个独立函数。
+
+```java
+void setValue(String name,int value){
+    if(name.equals("hegith")){
+        _height = value;
+    }
+    if(name.equals("width")){
+        _width = value;
+    }
+}
+
+//重构为
+void setHeight(int value){
+    this._height = value;
+}
+
+void setWidth(int value){
+    this._width = value;
+}
+```
+
+
+
+7：`Preserve Whole Object 保持对象完整`
+
+你从某个对象中取出若干值，将它们作为某一次函数调用时的参数。改为传递整个对象。
+
+
+
+8：`Replace Parameter With Methods 以函数取代参数`
+
+对象调用某个函数，并将所得结果作为参数，传递给另一个函数。而接受该参数的函数本身也能够调用前一个函数。
+
+让参数接受者去除该项参数，并直接调用前一个函数。
+
+```java
+int basePrice = _quantity * _itemPrice;
+
+discountLevel = getDiscountLevel();
+
+double finalPrice = discountedPrice (basePrice,discountLevel);  //这种传递是不是不太合适 
+
+//重构为
+int basePrice = _quantity * _itemPrice;
+
+discountLevel = getDiscountLevel();
+
+double finalPrice = discountedPrice  (basePrice);// 在这里面去通过方法获取discountLevel就可以了，没必要像上面那样传递过去
+
+//最后整合一下 是不是可以这样
+public double getPrice(){
+
+return discountedPrice ();
+
+}
+
+private double discountedPrice (){
+
+    if (getDiscountLevel()== 2)return getBasePrice()* 0.1;
+
+    else return getBasePrice()* 0.05;
+
+    }
+
+    private double getBasePrice(){
+
+    return _quantity * _itemPrice;
+
+}
+```
+
+9：`Introduce Parameter Object 引入参数对象`
+
+假如某些参数总是很自然地同时出现。以一个对象取代这些参数。
+
+```java
+void between(int start,int end){
+    //假如这组参数很多地方用到
+}
+
+//是否可以考虑把这两个参数封装成一个对象
+void between(IntRange range){
+    
+}
+```
+
+10：`Remove Setting Method 移除设值函数`
+
+类中的某个字段应该在对象创建时被设值，然后就不再改变。去掉该字段的所有设值函数。
+
+这种情况就不多说了，有些字段是不能修改，就不能暴露修改方法。
+
+
+
+11：`Hide Method 隐藏函数`
+
+有一个函数，从来没有被其他任何类用到。将这个函数修改为private。
+
+也就是没有被本身类以外用到，就可以设置为private。
+
+
+
+12：`Replace Constructor with Factory Method 以工厂函数取代构造函数`
+
+你希望在创建对象时不仅仅是做简单的建构动作。将构造函数替换为工厂函数。
+
+这个就不多说了，平时见的也比较多。
+
+
+
+13：`Encapsulate Downcast 封装向下转型`
+
+某个函数返回的对象，需要由函数调用者执行向下转型（downcast）。将向下转型动作移到函数中。
+
+```java
+Object lastReading(){
+    return readings.lastElement();
+}
+
+//是否可以改一下呢
+Reading lastReading(){
+
+	return (Reading)readings.lastElement();
+
+}
+```
+
+
+
+14：`Replace Error Code with Exception 以异常取代错误码`
+
+某个函数返回一个特定的代码，用以表示某种错误情况。改用异常。现在项目中，也是通过异常取代错误码，但可以把错误码设置在异常中，然后统一铺货该异常，处理里面错误码就OK。
+
+```java
+int withdraw(int amount){
+    if(amount > _balance){
+        return -1;
+    }else{
+        _balance -= amount;
+        return 0;
+    }
+}
+
+//重构为
+void withdraw(int amount)throws BalanceException {
+
+    if (amount > _balance)
+        throw new BalanceException();
+
+    _balance -= amount;
+
+}
+```
+
+但这个里要注意的是，具体抛出的是受控异常还是非受控异常。
+
+
+
+15：`Replace Exception with Test 以测试取代异常`
+
+面对一个调用者可以预先检查的条件，你抛出了一个异常。修改调用者，使它在调用函数之前先做检查。
+
+```java
+double getValueForPeriod(int periodNumber){
+
+    try {
+        return _values[periodNumber];
+
+    } catch (ArrayIndexOutOfBoundsException e){
+
+        return 0;
+
+    }
+}
+
+//上面看着是不是怪怪的 为何不直接在里面做检查呢
+double getValueForPeriod(int periodNumber){
+
+    if (periodNumber >= _values.length)return 0;
+
+    return _values[periodNumber];
+
+}
 ```
 
