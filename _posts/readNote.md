@@ -403,26 +403,144 @@ row.setName("Liverpool");
 row.setWins("15");
 
 //其实在开发中，可能会用到唯一的一对K V的 Pair
-
 ```
 
 
 
-6：`Duplicate Observed Data 复制 “被监视数据”`
+6：`Duplicate Observed Data 复制“被监视数据”`
+
+其实就是将发送给客户端的数据和本身业务上的数据区分开。
 
 
 
+7：`Change Unidirectional Association to Bidirectional 将单向关联改为双向关联`
+
+就是假如在两个实例中，需要使用到对方的特征，也就是说就需要互相引用。还是直接看代码吧。
+
+比如有两个类，Order 和 Customer,开始的时候，order中引用了customer，但customer中没有引用order。
+
+```java
+class Order{
+    private Customer _customer;
+    
+    public Customer getCustomer(){
+        return _customer;
+    }
+    
+    public void setCustomer(Customer customer){
+        this._customer = customer;
+    }
+}
+
+class Customer{
+    
+}
+```
+
+显然，在业务中，一个customer可能存在多个order的，那么这就需要通过order来进行关联关系。
+
+```java
+class Order{
+    void addCustomer(Customer customer){
+        customer.frientOrders.add(customer);
+        _customers.add(customer);
+    }
+    
+    void removeCustomer(Customer customer){
+        customer.friendOrders.remove(customer);
+        _customers.remove(customer);
+    }
+}
+
+class Customer{
+    void addOrder(Order order){
+        order.addCustomer(this);
+    }
+    
+    void removeOrder(Order order){
+        order.removeCustomer(order);
+    }
+}
+```
 
 
 
+8：`Change Bidirectional Association to Unidirectional 将双向关联改为单向关联`
+
+假如存在两个类之前是双向关联的，但现在一个类不再引用另一个类，那么就需要该为单向关联。
 
 
+
+9：`Replace Magic Number With Symbolic Constant 以字面常量取代魔法数`
+
+假如你有一个字面数值，带有特殊含义。那么可以创建一个常量，根据其意义为它命名， 并将上面的字面数值替换为这个常量。
+
+其实这个中情况平时还是比较常见的，一般都会专门定义为常量。
+
+```java
+double potentialEnergy(double mass,double height){
+    return mass * 9.81 * height;
+}
+
+//上面代码就可以做如下重构
+static final double GRAVITATIONAL_CONSTANT;
+double potentialEnergy(double mass,double height){
+    return mass * GRAVITATIONAL_CONSTANT * height;
+}
+```
+
+
+
+10：`Encapsulate Field 封装字段`
+
+你的类中存在一个public字段，将它声明为private,并提供专门的访问函数。
+
+```java
+public String _name;
+
+private String_name;
+
+public String getName(){
+    return name;
+}
+public void setName(String name){
+    this.name = name;
+}
+```
+
+日常开发中，要注意变量不要随便申明为public，如果这样的话，就破坏了封装性，既在外部可以随意访问该变量。
+
+
+
+11：`Encapsulate Collection 封装集合`
+
+有个函数返回集合，让这个函数返回该集合的一个只读副本，并在这个类中提供添加/移除集合元素的函数。
+
+这种情况怎么说呢，一般可以考虑直接返回一个不可变的集合。jdk和guava都有提供对应的api，但具体的实现还是有区别的，一个是浅拷贝，一个是深拷贝。
+
+
+
+12：`Replace Record With Data Class 以数据类取代记录`
+
+
+
+13：`Replace Type Code With Class 以类取代类型码`
+
+假如现在你类中，有一个数值类型码，但它并不影响类的行为，此时可以以一个新的类替换该数值类型码。
+
+
+
+14：`Replace Type Code With SubClass 以子类取代类型码`
+
+你有一个不可变的类型码，他会影响类的行为，以子类取代这个类型码，
 
 
 
 
 
 #### 简化条件表达式
+
+在平时开发中，难免会遇到一些比较复杂的条件表达式，如何将一个复杂的条件逻辑表达式分成若干个小块呢。
 
 
 
@@ -940,4 +1058,6 @@ double getValueForPeriod(int periodNumber){
 
 }
 ```
+
+
 
