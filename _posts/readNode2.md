@@ -271,5 +271,292 @@ public class Stack<T> {
 
 
 
-26：请不要使用原生态类型
+26：`请不要使用原生态类型`
+
+什么是原生类型呢，每一种泛型都定义一种原生态类型，即不带任何实际类型参数的泛型名称。例如，与List<E>相对应的原生态类型是List。原生态类型就像从类型声明中删除了所有的泛型信息。
+
+也就是不要这样用
+
+```java
+private final Collection stamps = .....
+```
+
+
+
+如果使用原生态类型，就失去了泛型在安全性和描述性方面的所有优势。
+
+既然不要使用原生态类型，那么为什么java的设计者还是运行这样做呢，大概是为了提供兼容性，早起是没有出现泛型的。
+
+
+
+27：`消除非受检的警告`
+
+用泛型编程时，经常会遇到一些警告。当遇到一些警告时，要即的去消除。
+
+比如
+
+```java
+Set<Integer> sets = new HashSet();
+//这了就会出现警告
+怎么修改呢，只需要加个<>就OK了，并不需要制定真正的类型。
+```
+
+
+
+如果无法消除警告，同时可以证明引起警告的代码类型是安全的，在这种情况下，可以使用@SuppressWarnings("unchecked")注解来禁止这条警告。但这个注解的使用，还是要注意点，尽量粒度小一点，小在一个字段上，千万不要在这个类上使用。
+
+
+
+28：`列表优于数组`
+
+来看一种情况
+
+```java
+Object[] array = new Long[1];
+array[0] = "i do";	//很明显这个是错误的
+
+List<Object> list = new ArrayList<Long>();
+list.add("i do");//明显也是不对的
+
+//出现这种问题，我们肯定是希望在编译的时候就发现，但如果是数组的话，要在运行的时候才会发现。
+```
+
+总之，数组是协变且可以具体化的，而泛型是不可变的且可以被擦除的。
+
+
+
+29：`优先考虑泛型`
+
+一般，直接用一些集合声明参数化，或者JDK中已经提供了的泛型方法，这些都不难，但编写自己的泛型就比较难了。
+
+继续以上面提到过的Stack为类。里面的的值就应该被参数化，即可以考虑泛型化。
+
+```java
+public class Stack<E> {
+
+    //1
+    private E[] elements;
+
+    private int size;
+
+    private static final int DEFAULT_INITIAL_CAPACITY = 16;
+
+    public Stack(E t){
+        //2
+        elements = new  E[DEFAULT_INITIAL_CAPACITY];
+    }
+
+    public void push(E obj) {
+        ensureCapacity();
+        elements[size++] = obj;
+    }
+
+    public E pop(){
+        if (size == 0) {
+            throw new EmptyStackException();
+        }
+        return (e) elements[--size];
+    }
+    private void ensureCapacity(){
+        if(elements.length == size){
+            elements = Arrays.copyOf(elements, 2 * size + 1);
+        }
+    }
+
+}
+
+
+```
+
+但是看到上面代码1 2地方，你会发现有警告或者错误提示，也就是说不可创建不可具体化的类型数组，如E，每当编写用数组支持的泛型时，都会出现这种问题，那怎么解决呢
+
+* 直接绕过创建泛型数组指令，创建一个Object数组，然后强转为E数组，但也会有警告。（这里只需要强转一次）
+* E[]数组替换我Object[]数组，pop的时候就要强转一下(每次都需要强转).
+
+
+
+简之，使用泛型比使用需要在客户端代码中进行强转的类型来的更安全一些，所以通常要把类做成泛型的。
+
+
+
+30：`优先考虑泛型方法`
+
+正如类可以从泛型中受益一般，方法也一样，特别是对于静态工具方法更适合于泛型化。
+
+以合并两个集合为类
+
+```java
+public static <E> Set<E> union(Set<E> s1,Set<E> s2){
+    Set<E> result = new HashSet<>(s1);
+    result.addAll(s2);
+    return result;
+}
+```
+
+
+
+31：`利用有限制通配符来提升API的灵活性`
+
+首先要知道，什么是有限制通配符
+
+```java
+public void pushAll(Iterable<? extends E>){
+    
+}
+
+public void popAll(Colelction<? super E> des){
+    
+}
+```
+
+其实上面可以这样理解的，如果参数化类型，表示一个生产者T，就使用<? extends T>，如果他表示一个消费者，就使用<? supper T>
+
+那么上面的代码是否可以考虑修改一下呢
+
+```java
+public static <E> Set<E> union(Set<? extends E> s1,Set<? extends E> s2){
+    Set<E> result = new HashSet<>(s1);
+    result.addAll(s2);
+    return result;
+}
+```
+
+
+
+32：`谨慎并用发型和可变参数`
+
+一旦要用，就需要使用注解@SafeVarargs
+
+```java
+@SafeVarargs
+static<T> List<T> flatten(List<? extends T>... lists){
+    List<T> result = new ArrayList<>();
+    for(List<? extends T> list : lists){
+        result.addAll(list);
+    }
+    return result;
+}
+
+//如果不想用上面注解，那怎么解决呢
+static<T> List<T> flatten(List<List<? extends T>>... lists){
+    List<T> result = new ArrayList<>();
+    for(List<? extends T> list : lists){
+        result.addAll(list);
+    }
+    return result;
+}
+```
+
+
+
+33：`优先考虑类型安全的异构容器`
+
+
+
+### 枚举和注解
+
+
+
+34：`用enum代替int常量`
+
+
+
+35：`用实例域代替序数`
+
+这个怎么说呢，对于所有的枚举，都要一个ordinal方法，它返回的是每个枚举常量在类型中的数字位置。一旦枚举常量前后顺序互换，那么久会出现问题，特别是对于一int持久化了的，那么反序列化后就不对了。所以永远不要根据枚举的序数导出与它关联的值，而是在它保存在一个实例域中。
+
+其实ordinal这个方法，大多数程序员是不需要用到的，这个是方法EnumSet和EnumMap这种基于枚举的通用数据结构。
+
+
+
+36：`用EnumSet代替位域`
+
+
+
+37：`用EnumMap代替序数索引`
+
+
+
+38：`用接口模拟可扩展的枚举`
+
+对于枚举来说，是不可扩展的，但可以通过编写接口以及实现该接口基础枚举类型类对它进行模拟。
+
+
+
+39：`注解优于命名模式`
+
+
+
+40：`坚持使用Override注解`
+
+
+
+41：`用标记接口定义类型`
+
+
+
+
+
+### Lambda 和 Stream
+
+在java8中，增加了函数接口、Lambda和方法引用，使得创建函数对象变得容易。
+
+
+
+42：`Lambda优先于匿名类`
+
+创建函数对象的主要方式是通过匿名类，看下这段代码，通过字符串长度排序。
+
+```java
+Collections.sort(words,new Comparator<String>(){
+    public int compare(String s1,String s2){
+        return Integer.compare(s1.length(),s2.length)
+    }
+});
+```
+
+上面的代码中，就是通过创建了一个匿名类。看起来是比较繁琐的，如果用lambda表达式，那么代码就会简单很多。
+
+```java
+Collections.sort(words,(s1,s2) -> Integer.comare(s1.length(),s2.length()));
+```
+
+编译器会通过函数推到，判断参数类型这些。
+
+```java
+//上面代码其实还可以更简单一些
+Collections.sort(words,comparingInt(Sring::length));
+
+words.sort(comparintInt(String:length));
+```
+
+
+
+然而并不是所有这些工作都可以用lambda来完成，毕竟lambda限于函数接口，如果是抽象类的实例，那么就应该考虑匿名类来完成。或者存在多个抽象方法的接口，也应该考虑匿名类。
+
+
+
+43：`方法引用优先于Lambda`
+
+与匿名类相比，Lambda的主要优势在于更加简洁，java还提供了生成比Lambda更简洁函数对象的方法：方法引用。
+
+
+
+44：`坚持使用标准的函数的接口`
+
+
+
+45：`谨慎使用Stream`
+
+
+
+46：`优先选择Stream中无副作用的函数`
+
+
+
+47：`Stream要优先用Collection作为返回类型`
+
+
+
+48：`谨慎使用Stream并行`
 
