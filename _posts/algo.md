@@ -202,6 +202,19 @@ a[k]_address = base_address + (k-1)*type_size
   }
   ```
 
+
+
+
+
+
+### 递归
+
+* 
+
+* 练习
+
+  leetcode 95
+
 * 
 
 ### 算法思想
@@ -244,7 +257,7 @@ a[k]_address = base_address + (k-1)*type_size
 
 * 练习
 
-  leetCode 120, 96
+  leetCode 120, 96，64
 
   
 
