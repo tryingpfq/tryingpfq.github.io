@@ -94,7 +94,7 @@ a[k]_address = base_address + (k-1)*type_size
 
 * 练习
 
-  1：leetcode 785，二分图判断
+  1：leetcode 785，二分图判断，329
 
 * BFS & DFS
 
@@ -244,7 +244,7 @@ a[k]_address = base_address + (k-1)*type_size
 
 * 练习
 
-  leetCode 120, 96
+  leetCode 120, 96，410
 
   
 
