@@ -89,3 +89,15 @@ StringBuffer是为了解决上面提到拼接产生太多中间对象的问题�
 在Java1.4中引入了NIO框架，提供了Channel.Selector.Buffer等抽象，可以构建多路复用。同步非阻塞IO.
 
 在Java7中，引入了AIO,
+
+12：Linux命令
+ [awk](http://www.ruanyifeng.com/blog/2018/11/awk.html)
+ 
+13：HTTP
+  [HTTP](https://www.cnblogs.com/xiaolincoding/p/12442435.html)
+  [一次完整的Http请求过程]
+14：设计模式
+    [单例模式](https://blog.csdn.net/u011595939/article/details/79972371)
+    
+15：异常
+  [异常机制](https://blog.csdn.net/hguisu/article/details/6155636)
